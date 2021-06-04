@@ -6,6 +6,8 @@
 Welcome to swinging_door's documentation!
 =========================================
 
+Implementation of the SwingingDoor algorithm in Python.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

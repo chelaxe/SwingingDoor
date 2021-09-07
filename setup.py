@@ -17,7 +17,8 @@ from setuptools import setup
 import swinging_door
 
 basedir = abspath(dirname(__file__))
-with open(join(basedir, "README.rst"), encoding="utf-8") as des:
+# pylint: disable=unspecified-encoding
+with open(join(basedir, "README.rst")) as des:
     long_description = des.read()
 
 setup(

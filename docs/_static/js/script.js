@@ -1,5 +1,7 @@
 jQuery(function($){
     $(function(){
-        console.log("ready...");
+        $("a.reference > img")
+            .parents("a")
+                .removeClass("reference");
     });
 });

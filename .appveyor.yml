@@ -1,0 +1,19 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+environment:
+  CODECOV_TOKEN:
+    secure: lBnsmGfViFcE5WhRiJFS8VqOFPhh44aD60vLRiVJ0IP3sgdFX2pLIs0f1lX+d3te
+  TWINE_USERNAME:
+    secure: tr99GUQQ0Ikdt9JA+va64A==
+  TWINE_PASSWORD:
+    secure: SJN8CTgG4gvTUBPgvxrHrmaYDenHp+lc2a7bXln3HiOyVTMuyrXSQ7NJxg4QaoPiYaGtXlgZabc3fI1tl0/CZBApPbPUMjlxfrxE+rL+2sy3uc3Ru866ktm5dfGDcu5YwsbR/YV5p7yTLsQyqLsM7IwWD5d1OHvupOLJ7IN2KdG3klTk/91hT3VV+haL6dJcCOzSTLbnpKkdD28Z7oPO+1WiM0jdUdZe3jMOs0wBaz1TYVOUMM1inUovVEsn9BlM
+install:
+- cmd: >-
+    C:\Python39\python -m venv .env
+    .env\Scripts\activate.bat
+    python -m pip install --upgrade pip setuptools
+    pip install tox
+build: off
+test_script:
+- cmd: tox
+deploy: off

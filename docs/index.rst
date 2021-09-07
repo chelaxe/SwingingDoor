@@ -3,22 +3,20 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to swinging_door's documentation!
-=========================================
-
-Implementation of the SwingingDoor algorithm in Python.
+.. include:: ../README.rst
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
 Source
-======
+------
 
 .. automodule:: swinging_door
+   :members:
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

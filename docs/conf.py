@@ -10,10 +10,19 @@ Generation of documentation.
 
 """
 
+from os.path import abspath
+from sys import path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import List, Tuple, Dict, Union
+    from typing import Dict, List, Tuple, Union
+
+path.insert(0, abspath("./../src"))
+
+# pylint: disable=wrong-import-position, unused-import,
+import swinging_door  # noqa: E402, F401
+
+# pylint: disable=invalid-name, redefined-builtin
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -41,9 +50,9 @@ todo_include_todos = True  # type: bool
 
 project = "swinging_door"  # type: str
 author = "Aleksandr F. Mikhaylov (ChelAxe) <chelaxe@gmail.com>"  # type: str
-copyright = "D.F.H. ChelAxe 2005 - 2021"  # type: str
-version = "0.1"  # type: str
-release = "0.1"  # type: str
+copyright = "D.F.H. ChelAxe 2005"  # type: str
+version = swinging_door.__version__  # type: str
+release = swinging_door.__version__  # type: str
 language = "en"  # type: str
 show_authors = True  # type: bool
 

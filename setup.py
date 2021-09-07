@@ -10,19 +10,30 @@ Package installation script.
 
 """
 
+from os.path import abspath, dirname, join
+
 from setuptools import setup
 
 import swinging_door
+
+basedir = abspath(dirname(__file__))
+with open(join(basedir, "README.rst"), encoding="utf-8") as des:
+    long_description = des.read()
 
 setup(
     name="swinging_door",
     version=swinging_door.__version__,
     description="Implementation of the SwingingDoor algorithm in Python.",
-    long_description=swinging_door.__doc__,
+    long_description=long_description,
     long_description_content_type="text/x-rst",
     author="Aleksandr F. Mikhaylov (ChelAxe)",
     author_email="chelaxe@gmail.com",
     url="https://github.com/chelaxe/SwingingDoor",
+    project_urls={
+        "Documentation": "https://swingingdoor.readthedocs.io/en/latest/",
+        "Source": "https://github.com/chelaxe/SwingingDoor",
+        "Tracker": "https://github.com/chelaxe/SwingingDoor/issues",
+    },
     py_modules=["swinging_door"],
     scripts=["swinging_door.py"],
     license="MIT",

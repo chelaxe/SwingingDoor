@@ -16,10 +16,10 @@ from setuptools import setup
 
 import swinging_door
 
-basedir = abspath(dirname(__file__))
+basedir = abspath(dirname(__file__))  # type: str
 # pylint: disable=unspecified-encoding
 with open(join(basedir, "README.rst")) as des:
-    long_description = des.read()
+    long_description = des.read()  # type: str
 
 setup(
     name="swinging_door",

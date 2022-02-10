@@ -17,7 +17,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from typing import Generator, Tuple
 
 __author__ = "Aleksandr F. Mikhaylov (ChelAxe)"  # type: str
-__version__ = "0.1.1"  # type: str
+__version__ = "0.1.2"  # type: str
 __license__ = "MIT"  # type: str
 
 

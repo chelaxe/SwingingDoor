@@ -18,7 +18,7 @@ if TYPE_CHECKING:  # pragma: no cover
     Point = Tuple[float, float]
 
 __author__ = "Aleksandr F. Mikhaylov (ChelAxe)"  # type: str
-__version__ = "1.0.0"  # type: str
+__version__ = "1.0.1"  # type: str
 __license__ = "MIT"  # type: str
 
 

@@ -1,6 +1,6 @@
 language: python
 python:
-  - "3.10"
+  - "3.11-dev"
 before_install:
   - python -m pip install --upgrade pip setuptools
 install:

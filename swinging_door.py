@@ -10,240 +10,173 @@ Implementation of the SwingingDoor algorithm in Python.
 
 """
 
-from sys import version_info
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Generator, Tuple
+    from typing import Generator, List, Tuple
+
+    Point = Tuple[float, float]
 
 __author__ = "Aleksandr F. Mikhaylov (ChelAxe)"  # type: str
-__version__ = "0.1"  # type: str
+__version__ = "1.0.0"  # type: str
 __license__ = "MIT"  # type: str
 
 
-class Point:
-    """
-    Point in rectangular coordinate system.
-    """
-
-    def __init__(self, abscissa, ordinate):
-        # type: (float, float) -> None
-        """
-
-        Class constructor specifying the coordinates of the point.
-
-        :param float abscissa: point abscissa;
-        :param float ordinate: point ordinate.
-
-        >>> Point(1.0, 2.0)
-        Point(1.0, 2.0)
-
-        """
-
-        self.abscissa = abscissa
-        self.ordinate = ordinate
-
-    def __call__(self):
-        # type: () -> Tuple[float, float]
-        """
-
-        A call that returns the coordinates of a point.
-
-        :rtype: Tuple[float, float]
-        :return: Point coordinates.
-
-        >>> Point(1.0, 2.0)()
-        (1.0, 2.0)
-
-        """
-
-        return self.abscissa, self.ordinate
-
-    def __repr__(self):  # type: () -> str
-        """
-
-        Unambiguous textual representation of an object.
-
-        :rtype: str
-        :return: Unambiguous textual representation of an object.
-
-        >>> repr(Point(1.0, 2.0))
-        'Point(1.0, 2.0)'
-
-        """
-
-        return "Point({abscissa}, {ordinate})".format(
-            abscissa=self.abscissa, ordinate=self.ordinate
-        )
-
-    def __str__(self):  # type: () -> str
-        """
-
-        Natural textual representation of the object.
-
-        :rtype: str
-        :return: Natural textual representation of the object.
-
-        >>> str(Point(1.0, 2.0))
-        '(1.0, 2.0)'
-
-        """
-
-        return "({abscissa}, {ordinate})".format(
-            abscissa=self.abscissa, ordinate=self.ordinate
-        )
-
-
-def swinging_door(
-    data,  # type: Generator[Tuple[float, float], None, None]
+def swinging_door(  # pylint: disable=too-many-locals
+    data,  # type: List[Point]
     deviation=0.1,  # type: float
+    mode=False,  # type: bool
+    step=10,  # type: int
 ):
-    # type: (...) -> Generator[Tuple[float, float], None, None]
+    # type: (...) -> Generator[Point, None, None]
     """
 
     Implementation of the SwingingDoor algorithm.
 
-    :param Generator[Tuple[float,float],None,None] data: data;
-    :param float deviation: compression deflection.
-    :rtype: Generator[Tuple[float, float], None, None]
+    :param List[Point] data: data;
+    :param float deviation: compression deflection;
+    :param bool mode: use a modified algorithm;
+    :param int step: step for the modified algorithm.
+    :rtype: Generator[Point, None, None]
     :return: Compressed data.
 
-    >>> def data(values):
-    ...     x = 0.0
-    ...     for y in values:
-    ...         yield x, y
-    ...         x += 1.0
-    >>> tuple(swinging_door(data([
-    ...     2.1, 3.1, 4.1, 4.6
-    ... ]), deviation=0.1))
-    ((0.0, 2.1), (2.444444444444445, 4.372222222222222))
+    >>> list(swinging_door([
+    ...     (0., 5.0), (1., 5.5), (2., 4.2),
+    ...     (3., 5.8), (4., 5.2), (5., 6.8),
+    ... ], deviation=1.))
+    [(0.0, 5.0), (4.5, 5.5), (5.0, 6.8)]
 
-    >>> tuple(swinging_door(data([
-    ...     4.1, 3.1, 2.1, 4.6
-    ... ]), deviation=0.1))
-    ((0.0, 4.1), (2.088235294117647, 2.270588235294118))
+    >>> list(swinging_door([
+    ...     (0., 5.0), (1., 5.5), (2., 4.2),
+    ...     (3., 5.8), (4., 5.2), (5., 2.8),
+    ... ], deviation=1.))
+    [(0.0, 5.0), (4.5, 3.5), (5.0, 2.8)]
+
+    >>> list(swinging_door([
+    ...     (0., 5.0), (1., 5.5), (2., 4.2),
+    ...     (3., 5.8), (4., 5.2), (5., 6.8),
+    ... ], deviation=1., mode=True))
+    [(0.0, 5.0), (4.0, 5.2), (5.0, 6.8)]
+
+    >>> list(swinging_door([
+    ...     (0., 5.0), (1., 5.5), (2., 4.2),
+    ...     (3., 5.8), (4., 5.2), (5., 6.8),
+    ... ], deviation=1., mode=True, step=2))
+    [(0.0, 5.0), (2.0, 4.2), (5.0, 6.8)]
 
     """
 
-    entrance = current = Point(
-        *(
-            data.__next__()
-            if version_info.major > 2
-            else data.next()  # type: ignore
-        )
-    )  # type: Point
-
-    upper_pivot = Point(
-        entrance.abscissa, entrance.ordinate + deviation
-    )  # type: Point
-    lower_pivot = Point(
-        entrance.abscissa, entrance.ordinate - deviation
-    )  # type: Point
+    current_step = 0  # type: int
+    upper_pivot = lower_pivot = current = (0.0, 0.0)  # type: Point
 
     sloping_upper_max = sloping_lower_min = 0.0  # type: float
 
-    yield entrance()
+    for i, item in enumerate(data):
+        if not i:
+            entrance = current = item
 
-    while True:
-        past = current  # type: Point
-
-        try:
-            current = Point(
-                *(
-                    data.__next__()
-                    if version_info.major > 2
-                    else data.next()  # type: ignore
-                )
+            upper_pivot = (
+                entrance[0],
+                entrance[1] + deviation,
+            )
+            lower_pivot = (
+                entrance[0],
+                entrance[1] - deviation,
             )
 
-        except StopIteration:
-            break
+            yield entrance
 
-        sloping_upper = (current.ordinate - upper_pivot.ordinate) / (
-            current.abscissa - upper_pivot.abscissa
+            current_step = 0
+            continue
+
+        past, current = current, item
+
+        sloping_upper = (current[1] - upper_pivot[1]) / (
+            current[0] - upper_pivot[0]
         )  # type: float
-        sloping_lower = (current.ordinate - lower_pivot.ordinate) / (
-            current.abscissa - lower_pivot.abscissa
+        sloping_lower = (current[1] - lower_pivot[1]) / (
+            current[0] - lower_pivot[0]
         )  # type: float
 
         if not sloping_upper_max and not sloping_lower_min:
             sloping_upper_max = sloping_upper
             sloping_lower_min = sloping_lower
 
+            current_step += 1
             continue
 
         if sloping_upper > sloping_upper_max:
             sloping_upper_max = sloping_upper
 
             if sloping_upper_max > sloping_lower_min:
-                sloping_entrance = (current.ordinate - past.ordinate) / (
-                    current.abscissa - past.abscissa
-                )  # type: float
-                entrance_upper = (
-                    upper_pivot.ordinate
-                    - past.ordinate
-                    + sloping_entrance * past.abscissa
-                    - sloping_lower_min * upper_pivot.abscissa
-                ) / (
-                    sloping_entrance - sloping_lower_min
-                )  # type: float
-                entrance = Point(
-                    entrance_upper,
-                    upper_pivot.ordinate
-                    + sloping_lower_min
-                    * (entrance_upper - upper_pivot.abscissa)
-                    - deviation / 2,
+                entrance = (
+                    past
+                    if mode
+                    else (
+                        (past[0] + current[0]) / 2,
+                        (past[1] + current[1]) / 2 - (deviation / 2),
+                    )
                 )
 
-                yield entrance()
+                yield entrance
 
-                upper_pivot = Point(
-                    entrance.abscissa, entrance.ordinate + deviation
-                )
-                lower_pivot = Point(
-                    entrance.abscissa, entrance.ordinate - deviation
-                )
+                current_step = 0
 
-                sloping_upper_max = sloping_upper = (
-                    current.ordinate - upper_pivot.ordinate
-                ) / (current.abscissa - upper_pivot.abscissa)
-                sloping_lower_min = sloping_lower = (
-                    current.ordinate - lower_pivot.ordinate
-                ) / (current.abscissa - lower_pivot.abscissa)
+                upper_pivot = entrance[0], entrance[1] + deviation
+                lower_pivot = entrance[0], entrance[1] - deviation
+
+                sloping_upper_max = (current[1] - upper_pivot[1]) / (
+                    current[0] - upper_pivot[0]
+                )
+                sloping_lower_min = (current[1] - lower_pivot[1]) / (
+                    current[0] - lower_pivot[0]
+                )
 
         elif sloping_lower < sloping_lower_min:
             sloping_lower_min = sloping_lower
 
             if sloping_upper_max > sloping_lower_min:
-                sloping_entrance = (current.ordinate - past.ordinate) / (
-                    current.abscissa - past.abscissa
-                )
-                entrance_lower = (
-                    lower_pivot.ordinate
-                    - past.ordinate
-                    + sloping_entrance * past.abscissa
-                    - sloping_upper_max * lower_pivot.abscissa
-                ) / (sloping_entrance - sloping_upper_max)
-                entrance = Point(
-                    entrance_lower,
-                    lower_pivot.ordinate
-                    + sloping_upper_max
-                    * (entrance_lower - lower_pivot.abscissa)
-                    + deviation / 2,
+                entrance = (
+                    past
+                    if mode
+                    else (
+                        (past[0] + current[0]) / 2,
+                        (past[1] + current[1]) / 2 - (deviation / 2),
+                    )
                 )
 
-                yield entrance()
+                yield entrance
 
-                upper_pivot = Point(
-                    entrance.abscissa, entrance.ordinate + deviation
+                current_step = 0
+
+                upper_pivot = entrance[0], entrance[1] + deviation
+                lower_pivot = entrance[0], entrance[1] - deviation
+
+                sloping_upper_max = (current[1] - upper_pivot[1]) / (
+                    current[0] - upper_pivot[0]
                 )
-                lower_pivot = Point(
-                    entrance.abscissa, entrance.ordinate - deviation
+                sloping_lower_min = (current[1] - lower_pivot[1]) / (
+                    current[0] - lower_pivot[0]
                 )
 
-                sloping_upper_max = sloping_upper = (
-                    current.ordinate - upper_pivot.ordinate
-                ) / (current.abscissa - upper_pivot.abscissa)
-                sloping_lower_min = sloping_lower = (
-                    current.ordinate - lower_pivot.ordinate
-                ) / (current.abscissa - lower_pivot.abscissa)
+        if mode and current_step == step:
+            entrance = past
+
+            yield entrance
+
+            current_step = 0
+
+            upper_pivot = entrance[0], entrance[1] + deviation
+            lower_pivot = entrance[0], entrance[1] - deviation
+
+            sloping_upper_max = (current[1] - upper_pivot[1]) / (
+                current[0] - upper_pivot[0]
+            )
+            sloping_lower_min = (current[1] - lower_pivot[1]) / (
+                current[0] - lower_pivot[0]
+            )
+
+        else:
+            current_step += 1
+
+    yield current

@@ -16,10 +16,10 @@ from setuptools import setup
 
 import swinging_door
 
-basedir = abspath(dirname(__file__))  # type: str
+basedir = abspath(dirname(__file__))
 # pylint: disable=unspecified-encoding
 with open(join(basedir, "README.rst")) as des:
-    long_description = des.read()  # type: str
+    long_description = des.read()
 
 setup(
     name="swinging_door",
@@ -54,5 +54,6 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
 )

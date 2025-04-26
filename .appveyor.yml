@@ -7,6 +7,8 @@ environment:
     secure: tr99GUQQ0Ikdt9JA+va64A==
   TWINE_PASSWORD:
     secure: SJN8CTgG4gvTUBPgvxrHrmaYDenHp+lc2a7bXln3HiOyVTMuyrXSQ7NJxg4QaoPiYaGtXlgZabc3fI1tl0/CZBApPbPUMjlxfrxE+rL+2sy3uc3Ru866ktm5dfGDcu5YwsbR/YV5p7yTLsQyqLsM7IwWD5d1OHvupOLJ7IN2KdG3klTk/91hT3VV+haL6dJcCOzSTLbnpKkdD28Z7oPO+1WiM0jdUdZe3jMOs0wBaz1TYVOUMM1inUovVEsn9BlM
+  SAFETY_API_KEY:
+    secure: oFPmi+6TDrgw/U9XrmvyG2ZkMp8enZbqGgkPxuBZWOJYjdr2iw5nw5ymNJ+GyBMH
 install:
 - cmd: >-
     C:\Python311\python -m venv .env

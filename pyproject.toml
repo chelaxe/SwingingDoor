@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "swinging_door"
-description = "Implementation of the SwingingDoor algorithm in Python."
+description = "Implementation of the Swinging Door algorithm in Python."
 readme = "README.rst"
 license = "MIT"
 license-files = ["LICENSE"]

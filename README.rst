@@ -5,7 +5,7 @@
 Swinging Door
 =============
 
-Implementation of the SwingingDoor algorithm in Python.
+Implementation of the Swinging Door algorithm in Python.
 
 Example of usage
 ----------------
@@ -22,7 +22,7 @@ Example of usage
     ...             "Price": value
     ...         }
     ...         for date, value in read_csv(
-    ...             "https://raw.githubusercontent.com/datasets/oil-prices/refs/heads/main/data/wti-daily.csv"
+    ...             "https://datahub.io/core/oil-prices/r/wti-daily.csv"
     ...         ).values.tolist()
     ...     ]
     ... )

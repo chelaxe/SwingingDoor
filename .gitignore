@@ -40,6 +40,9 @@ MANIFEST
 *.manifest
 *.spec
 
+.ruff_cache/
+.virtual_documents/
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt

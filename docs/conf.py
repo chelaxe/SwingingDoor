@@ -1,13 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 """
-
 conf
 ====
 
 Generation of documentation.
-
 """
 
 from os.path import abspath
@@ -19,66 +16,66 @@ if TYPE_CHECKING:
 
 path.insert(0, abspath("./../src"))
 
-# pylint: disable=wrong-import-position, unused-import,
+# pylint: disable=wrong-import-position, unused-import, import-error,
 import swinging_door  # noqa: E402, F401
 
 # pylint: disable=invalid-name, redefined-builtin
 
-extensions = [
+extensions: "List[str]" = [
     "sphinx.ext.autodoc",
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
-]  # type: List[str]
+]
 
-source_suffix = ".rst"  # type: str
-master_doc = "index"  # type: str
+source_suffix: str = ".rst"
+master_doc: str = "index"
 
-autodoc_default_options = {
+autodoc_default_options: "Dict[str, Union[bool, str]]" = {
     "private-members": True,
     "special-members": "__init__, __repr__, __str__, __call__",
     "show-inheritance": True,
     "members": True,
     "exclude-members": "__weakref__",
-}  # type: Dict[str, Union[bool, str]]
+}
 
-intersphinx_mapping = {
+intersphinx_mapping: "Dict[str, Tuple[str, None]]" = {
     "python": ("https://docs.python.org/3/", None),
     "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
-}  # type: Dict[str, Tuple[str, None]]
-todo_include_todos = True  # type: bool
+}
+todo_include_todos: bool = True
 
-project = "swinging_door"  # type: str
-author = "Aleksandr F. Mikhaylov (ChelAxe) <chelaxe@gmail.com>"  # type: str
-copyright = "D.F.H. ChelAxe 2005"  # type: str
-version = swinging_door.__version__  # type: str
-release = swinging_door.__version__  # type: str
-language = "en"  # type: str
-show_authors = True  # type: bool
+project: str = "swinging_door"
+author: str = "Aleksandr F. Mikhaylov (ChelAxe) <chelaxe@gmail.com>"
+copyright: str = "D.F.H. ChelAxe 2005"
+version: str = swinging_door.__version__
+release: str = swinging_door.__version__
+language: str = "en"
+show_authors: bool = True
 
-html_theme = "alabaster"  # type: str
-html_show_sourcelink = False  # type: bool
-html_show_copyright = False  # type: bool
-html_experimental_html5_writer = True  # type: bool
-html_theme_options = {
+html_theme: str = "alabaster"
+html_show_sourcelink: bool = False
+html_show_copyright: bool = False
+html_experimental_html5_writer: bool = True
+html_theme_options: "Dict[str, Union[str, bool]]" = {
     "logo": "images/logo.png",
     "description": "Swinging Door",
     "fixed_sidebar": True,
     "sidebar_collapse": True,
     "show_powered_by": False,
     "show_relbars": True,
-}  # type: Dict[str, Union[str, bool]]
+}
 
-html_static_path = ["_static"]  # type: List[str]
-html_css_files = ["css/style.min.css"]  # type: List[str]
-html_js_files = ["js/script.min.js"]  # type: List[str]
-html_favicon = "_static/favicon.ico"  # type: str
-mathjax_path = "js/MathJax/MathJax.js"  # type: str
+html_static_path: "List[str]" = ["_static"]
+html_css_files: "List[str]" = ["css/style.min.css"]
+html_js_files: "List[str]" = ["js/script.min.js"]
+html_favicon: str = "_static/favicon.ico"
+mathjax_path: str = "js/MathJax/MathJax.js"
 
-latex_paper_size = "a4"  # type: str
-latex_logo = "_static/images/logo.png"  # type: str
-latex_font_size = "14pt"  # type: str
-latex_documents = [
+latex_paper_size: str = "a4"
+latex_logo: str = "_static/images/logo.png"
+latex_font_size: str = "14pt"
+latex_documents: "List[Tuple[str, str, str, str, str]]" = [
     (
         "index",
         "swinging_door.tex",
@@ -86,4 +83,4 @@ latex_documents = [
         "Aleksandr F. Mikhaylov (ChelAxe) <chelaxe@gmail.com>",
         "howto",
     )
-]  # type: List[Tuple[str, str, str, str, str]]
+]

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "swinging_door"
+description = "Implementation of the SwingingDoor algorithm in Python."
+readme = "README.rst"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["SwingingDoor"]
+requires-python = ">= 3.9"
+authors = [
+    { name = "Aleksandr F. Mikhaylov (ChelAxe)", email = "chelaxe@gmail.com" }
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development",
+    "Typing :: Typed",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13"
+]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://swingingdoor.readthedocs.io/en/latest/"
+Source = "https://github.com/chelaxe/SwingingDoor"
+Tracker = "https://github.com/chelaxe/SwingingDoor/issues"
+
+[tool.setuptools]
+py-modules = ["swinging_door"]
+
+[tool.setuptools.dynamic]
+version = { attr = "swinging_door.__version__" }

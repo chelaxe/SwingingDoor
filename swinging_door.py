@@ -1,182 +1,209 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 """
-
 swinging_door
 =============
 
-Implementation of the SwingingDoor algorithm in Python.
-
+Implementation of the Swinging Door algorithm in Python.
 """
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Generator, List, Tuple
+    from typing import Generator, Iterator, Tuple, Union
 
-    Point = Tuple[float, float]
+    Source = Union[Generator, Iterator]
+    Number = Union[int, float]
+    Point = Tuple[Number, Number]
+    Stretch = Tuple[Point, Point]
+    Slopings = Tuple[float, float]
 
-__author__ = "Aleksandr F. Mikhaylov (ChelAxe)"  # type: str
-__version__ = "1.0.1"  # type: str
-__license__ = "MIT"  # type: str
+__author__: str = "Aleksandr F. Mikhaylov (ChelAxe)"
+__version__: str = "2.0.0"
+__license__: str = "MIT"
 
 
-def swinging_door(  # pylint: disable=too-many-locals
-    data,  # type: List[Point]
-    deviation=0.1,  # type: float
-    mode=False,  # type: bool
-    step=10,  # type: int
-):
-    # type: (...) -> Generator[Point, None, None]
+def _sloping_calc(stretch: "Stretch", deviation: "Number") -> "Slopings":
+    """
+    Calculate slopings upper and lower.
+
+    :param Stretch stretch: stretch;
+    :param Number deviation: compression deflection.
+    :rtype: Slopings
+    :return: Slopings upper and lower.
+    :raises ValueError: if division by 0 occurs during slope calculation.
+
+    >>> _sloping_calc(((1, 6), (2, 6.5)), 1)
+    (1.5, -0.5)
+
+    >>> _sloping_calc(((1, 6), (1, 6.5)), 1)
+    Traceback (most recent call last):
+        ...
+    ValueError: The division by 0 occurs during the calculation of the slope.
     """
 
+    current: "Point"
+    entrance: "Point"
+    current, entrance = stretch
+
+    _divide: float = current[0] - entrance[0]
+
+    try:
+        upper: float = (current[1] - (entrance[1] + deviation)) / _divide
+        lower: float = (current[1] - (entrance[1] - deviation)) / _divide
+
+    except ZeroDivisionError as err:
+        raise ValueError(
+            "The division by 0 occurs during the calculation of the slope."
+        ) from err
+
+    return upper, lower
+
+
+def _new_corridor(
+    stretch: "Stretch", deviation: "Number", upper: bool = True
+) -> "Tuple[Point, Slopings]":
+    """
+    Calculate new corridor.
+
+    :param Stretch stretch: stretch;
+    :param Number deviation: compression deflection;
+    :param bool upper: upper point.
+    :rtype: Tuple[Point, Slopings]
+    :return: Entrance point and slopings upper and lower.
+
+    >>> _new_corridor(((7, 8), (8, 9.5)), 1)
+    ((7.5, 8.25), (0.5, 4.5))
+
+    >>> _new_corridor(((7, 8), (8, 6)), 1, False)
+    ((7.5, 7.5), (-5.0, -1.0))
+    """
+
+    past: "Point"
+    current: "Point"
+    past, current = stretch
+
+    entrance: "Point" = (
+        (past[0] + current[0]) / 2,
+        (
+            (past[1] + current[1]) / 2 - (deviation / 2)
+            if upper
+            else (past[1] + current[1]) / 2 + (deviation / 2)
+        ),
+    )
+
+    return entrance, _sloping_calc((current, entrance), deviation)
+
+
+def swinging_door(
+    source: "Source", deviation: "Number" = 0.1
+) -> "Generator[Point, None, None]":
+    """
     Implementation of the SwingingDoor algorithm.
 
-    :param List[Point] data: data;
-    :param float deviation: compression deflection;
-    :param bool mode: use a modified algorithm;
-    :param int step: step for the modified algorithm.
+    :param Source source: source data;
+    :param Number deviation: compression deflection.
     :rtype: Generator[Point, None, None]
     :return: Compressed data.
 
-    >>> list(swinging_door([
-    ...     (0., 5.0), (1., 5.5), (2., 4.2),
-    ...     (3., 5.8), (4., 5.2), (5., 6.8),
-    ... ], deviation=1.))
-    [(0.0, 5.0), (4.5, 5.5), (5.0, 6.8)]
+    >>> list(swinging_door(iter([
+    ...     (1, 6), (2, 6.5), (3, 5.5),
+    ...     (4, 6.5), (5, 8), (6, 7.5),
+    ...     (7, 8), (8, 9.5),
+    ... ]), 1))
+    [(1, 6), (7.5, 8.25), (8, 9.5)]
 
-    >>> list(swinging_door([
-    ...     (0., 5.0), (1., 5.5), (2., 4.2),
-    ...     (3., 5.8), (4., 5.2), (5., 2.8),
-    ... ], deviation=1.))
-    [(0.0, 5.0), (4.5, 3.5), (5.0, 2.8)]
+    >>> list(swinging_door(iter([
+    ...     (1, 6), (2, 6.5), (3, 5.5),
+    ...     (4, 6.5), (5, 8), (6, 7.5),
+    ...     (7, 8), (8, 6),
+    ... ]), 1))
+    [(1, 6), (7.5, 7.5), (8, 6)]
 
-    >>> list(swinging_door([
-    ...     (0., 5.0), (1., 5.5), (2., 4.2),
-    ...     (3., 5.8), (4., 5.2), (5., 6.8),
-    ... ], deviation=1., mode=True))
-    [(0.0, 5.0), (4.0, 5.2), (5.0, 6.8)]
+    >>> list(swinging_door(iter([
+    ...     (1, 6), (2, 6.5), (3, 5.5),
+    ...     (4, 6.5), (5, 8), (6, 7.5),
+    ...     (7, 8),
+    ... ]), 0))
+    [(1, 6), (2, 6.5), (3, 5.5), (4, 6.5), (5, 8), (6, 7.5), (7, 8)]
 
-    >>> list(swinging_door([
-    ...     (0., 5.0), (1., 5.5), (2., 4.2),
-    ...     (3., 5.8), (4., 5.2), (5., 6.8),
-    ... ], deviation=1., mode=True, step=2))
-    [(0.0, 5.0), (2.0, 4.2), (5.0, 6.8)]
+    >>> list(swinging_door(iter([]), 1))
+    []
 
+    >>> list(swinging_door(iter([(1, 6),]), 1))
+    [(1, 6)]
+
+    >>> list(swinging_door(iter([(1, 6),(1, 6.5),]), 1))
+    Traceback (most recent call last):
+        ...
+    ValueError: The division by 0 occurs during the calculation of the slope.
     """
 
-    current_step = 0  # type: int
-    upper_pivot = lower_pivot = current = (0.0, 0.0)  # type: Point
+    if not deviation:
+        yield from source
+        return
 
-    sloping_upper_max = sloping_lower_min = 0.0  # type: float
+    try:
+        entrance: "Point" = next(source)
 
-    for i, item in enumerate(data):
-        if not i:
-            entrance = current = item
+    except StopIteration:
+        return
 
-            upper_pivot = (
-                entrance[0],
-                entrance[1] + deviation,
-            )
-            lower_pivot = (
-                entrance[0],
-                entrance[1] - deviation,
-            )
+    yield entrance
 
-            yield entrance
+    try:
+        current: "Point" = next(source)
 
-            current_step = 0
-            continue
+    except StopIteration:
+        return
 
-        past, current = current, item
+    sloping_upper: float
+    sloping_lower: float
 
-        sloping_upper = (current[1] - upper_pivot[1]) / (
-            current[0] - upper_pivot[0]
-        )  # type: float
-        sloping_lower = (current[1] - lower_pivot[1]) / (
-            current[0] - lower_pivot[0]
-        )  # type: float
+    sloping_upper, sloping_lower = _sloping_calc(
+        (current, entrance), deviation
+    )
 
-        if not sloping_upper_max and not sloping_lower_min:
-            sloping_upper_max = sloping_upper
-            sloping_lower_min = sloping_lower
+    sloping_upper_max: float = sloping_upper
+    sloping_lower_min: float = sloping_lower
 
-            current_step += 1
-            continue
+    try:
+        while True:
+            past: "Point" = current
+            current = next(source)
 
-        if sloping_upper > sloping_upper_max:
-            sloping_upper_max = sloping_upper
-
-            if sloping_upper_max > sloping_lower_min:
-                entrance = (
-                    past
-                    if mode
-                    else (
-                        (past[0] + current[0]) / 2,
-                        (past[1] + current[1]) / 2 - (deviation / 2),
-                    )
-                )
-
-                yield entrance
-
-                current_step = 0
-
-                upper_pivot = entrance[0], entrance[1] + deviation
-                lower_pivot = entrance[0], entrance[1] - deviation
-
-                sloping_upper_max = (current[1] - upper_pivot[1]) / (
-                    current[0] - upper_pivot[0]
-                )
-                sloping_lower_min = (current[1] - lower_pivot[1]) / (
-                    current[0] - lower_pivot[0]
-                )
-
-        elif sloping_lower < sloping_lower_min:
-            sloping_lower_min = sloping_lower
-
-            if sloping_upper_max > sloping_lower_min:
-                entrance = (
-                    past
-                    if mode
-                    else (
-                        (past[0] + current[0]) / 2,
-                        (past[1] + current[1]) / 2 - (deviation / 2),
-                    )
-                )
-
-                yield entrance
-
-                current_step = 0
-
-                upper_pivot = entrance[0], entrance[1] + deviation
-                lower_pivot = entrance[0], entrance[1] - deviation
-
-                sloping_upper_max = (current[1] - upper_pivot[1]) / (
-                    current[0] - upper_pivot[0]
-                )
-                sloping_lower_min = (current[1] - lower_pivot[1]) / (
-                    current[0] - lower_pivot[0]
-                )
-
-        if mode and current_step == step:
-            entrance = past
-
-            yield entrance
-
-            current_step = 0
-
-            upper_pivot = entrance[0], entrance[1] + deviation
-            lower_pivot = entrance[0], entrance[1] - deviation
-
-            sloping_upper_max = (current[1] - upper_pivot[1]) / (
-                current[0] - upper_pivot[0]
-            )
-            sloping_lower_min = (current[1] - lower_pivot[1]) / (
-                current[0] - lower_pivot[0]
+            sloping_upper, sloping_lower = _sloping_calc(
+                (current, entrance), deviation
             )
 
-        else:
-            current_step += 1
+            if sloping_upper > sloping_upper_max:
+                sloping_upper_max = sloping_upper
 
-    yield current
+                if sloping_upper_max > sloping_lower_min:
+                    entrance, (
+                        sloping_upper_max,
+                        sloping_lower_min,
+                    ) = _new_corridor((past, current), deviation)
+
+                    yield entrance
+
+            elif sloping_lower < sloping_lower_min:
+                sloping_lower_min = sloping_lower
+
+                if sloping_upper_max > sloping_lower_min:
+                    entrance, (
+                        sloping_upper_max,
+                        sloping_lower_min,
+                    ) = _new_corridor((past, current), deviation, upper=False)
+
+                    yield entrance
+
+    except StopIteration:
+        yield past
+
+
+if __name__ == "__main__":  # pragma: no cover
+    import sys
+    from doctest import testmod
+
+    sys.exit(testmod().failed)

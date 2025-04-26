@@ -22,13 +22,13 @@ Example of usage
     ...             "Price": value
     ...         }
     ...         for date, value in read_csv(
-    ...             "https://datahub.io/core/oil-prices/r/wti-daily.csv"
+    ...             "https://raw.githubusercontent.com/datasets/oil-prices/refs/heads/main/data/wti-daily.csv"
     ...         ).values.tolist()
     ...     ]
     ... )
 
     >>> print(len(df))
-    9286
+    9895
 
     >>> df.plot(x="Date", y="Price")
 
@@ -43,16 +43,16 @@ Example of usage
     ...             "Price": value
     ...         }
     ...         for date, value in swinging_door(
-    ...             [
+    ...             iter(
     ...                 (date.timestamp(), value)
     ...                 for date, value in df.values.tolist()
-    ...             ], deviation=.5
+    ...             ), deviation=.5
     ...         )
     ...     )
     ... )
 
     >>> print(len(compress))
-    2719
+    3392
 
     >>> compress.plot(x="Date", y="Price")
 

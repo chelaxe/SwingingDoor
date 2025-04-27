@@ -19,7 +19,7 @@ if TYPE_CHECKING:  # pragma: no cover
     Slopings = Tuple[float, float]
 
 __author__: str = "Aleksandr F. Mikhaylov (ChelAxe)"
-__version__: str = "2.0.0"
+__version__: str = "2.0.1"
 __license__: str = "MIT"
 
 
